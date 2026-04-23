@@ -1,21 +1,692 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8">
-  <title>TRP Internal</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="icon" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><ellipse cx='16' cy='16' rx='14' ry='8' fill='none' stroke='%23003749' stroke-width='2.5'/><circle cx='16' cy='16' r='5.5' fill='%23003749'/></svg>">
-  <style>
-    html, body { margin: 0; padding: 0; height: 100%; overflow: hidden; background: #FAECE5; }
-    iframe { border: 0; width: 100%; height: 100%; display: block; }
-  </style>
+<meta charset="utf-8">
+<title>TRP Internal SharePoint</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><circle cx='16' cy='16' r='14' fill='none' stroke='%23003749' stroke-width='2'/><circle cx='16' cy='16' r='10' fill='none' stroke='%23003749' stroke-width='2'/><ellipse cx='16' cy='16' rx='10' ry='6' fill='none' stroke='%23003749' stroke-width='2.2' transform='rotate(-25 16 16)'/><ellipse cx='16' cy='16' rx='10' ry='6' fill='none' stroke='%23003749' stroke-width='2.2' transform='rotate(25 16 16)'/></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Libre+Franklin:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+/* ================================================================
+   TRP SHAREPOINT - STYLES
+   Brand: Monsterat.  Libre Frank
+   Pacific Blue #1FBDD6 | Sizzling Red #E85E60 | Atomic Tangerine #FFA764
+   Dark Blue #003749 | Fresh Linen #FAECE5
+   ================================================================ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --pacific: #1FBDD6;
+  --red: #E85E60;
+  --tangerine: #FFA764;
+  --dark: #003749;
+  --linen: #FAECE5;
+  --paper: #FFF7F2;
+  --ink: #1A1410;
+  --ink-soft: #5a4a42;
+  --rule: rgba(0,55,73,0.12);
+  --cat-org: #2D6A4F;
+  --cat-holiday: #a85c3a;
+  --cat-birthday: #c97560;
+  --cat-dei: #5c3d7a;
+  --cat-partner: #3a5a7a;
+  --cat-mission: #a8832b;
+}
+html, body { margin: 0; height: 100%; font-family: 'Libre Franklin', sans-serif; background: var(--linen); color: var(--dark); font-size: 14px; line-height: 1.5; }
+a { color: inherit; text-decoration: none; }
+button { font-family: inherit; }
+
+/* Header */
+.trp-header { display: flex; align-items: center; justify-content: space-between; padding: 0 28px; height: 54px; background: var(--dark); border-bottom: 3px solid var(--pacific); }
+.trp-header-left { display: flex; align-items: center; gap: 12px; }
+.trp-logo { width: 28px; height: 28px; }
+.trp-mark { font-size: 11px; letter-spacing: 2.5px; text-transform: uppercase; color: #fff; font-weight: 700; }
+.trp-nav { display: flex; gap: 3px; margin-left: 20px; }
+.trp-nav-btn { padding: 5px 14px; font-size: 12px; font-weight: 500; color: rgba(255,255,255,0.65); background: transparent; border: none; border-radius: 4px; cursor: pointer; letter-spacing: 0.3px; }
+.trp-nav-btn:hover { color: #fff; }
+.trp-nav-btn.active { color: #fff; font-weight: 700; background: rgba(255,255,255,0.1); }
+.trp-header-right { display: flex; align-items: center; gap: 12px; }
+.trp-greeting { font-size: 12px; color: rgba(255,255,255,0.7); }
+.trp-greeting strong { color: #fff; }
+.trp-avatar { width: 28px; height: 28px; border-radius: 50%; background: var(--red); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; }
+
+/* Pages */
+.trp-page { display: none; flex: 1; overflow: auto; padding: 28px 32px 48px; }
+.trp-page.active { display: block; }
+
+/* Home hero */
+.trp-kicker { font-size: 10px; letter-spacing: 3px; text-transform: uppercase; color: var(--red); font-weight: 700; margin-bottom: 10px; display: flex; align-items: center; gap: 10px; }
+.trp-kicker::before { content: ''; width: 24px; height: 2px; background: var(--red); }
+.trp-h1 { font-size: 42px; line-height: 1; letter-spacing: -1.5px; color: var(--dark); font-weight: 800; margin: 0 0 8px; }
+.trp-sub { font-size: 13px; color: var(--ink-soft); margin: 0 0 28px; }
+
+/* Section tiles */
+.trp-tiles { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0; border-top: 2px solid var(--dark); margin-bottom: 28px; }
+.trp-tile { padding: 20px 18px 18px; border-right: 1px solid var(--rule); display: flex; flex-direction: column; justify-content: space-between; min-height: 180px; cursor: pointer; transition: background 200ms; }
+.trp-tile:last-child { border-right: none; }
+.trp-tile:hover { background: var(--paper); }
+.trp-tile-bar { width: 28px; height: 3px; margin-bottom: 12px; }
+.trp-tile h3 { font-size: 16px; line-height: 1.15; letter-spacing: -0.3px; color: var(--dark); font-weight: 700; margin: 0 0 6px; }
+.trp-tile p { font-size: 11.5px; color: var(--ink-soft); line-height: 1.5; margin: 0; }
+.trp-tile-tags { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 8px; }
+.trp-tile-tag { font-size: 10px; padding: 2px 7px; background: rgba(0,55,73,0.06); color: var(--dark); font-weight: 500; }
+.trp-tile-foot { display: flex; justify-content: space-between; align-items: center; font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; color: var(--dark); margin-top: 14px; padding-top: 12px; border-top: 1px dashed var(--rule); }
+
+/* Panels */
+.trp-cols { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+.trp-panel { border: 1px solid var(--rule); background: var(--paper); }
+.trp-panel-head { display: flex; justify-content: space-between; align-items: center; padding: 12px 16px; border-bottom: 1px solid var(--rule); }
+.trp-panel-title { font-size: 10px; letter-spacing: 2px; text-transform: uppercase; font-weight: 700; color: var(--dark); }
+.trp-panel-meta { font-size: 10px; color: var(--ink-soft); }
+.trp-link-row { display: flex; align-items: center; gap: 10px; padding: 9px 16px; font-size: 12.5px; border-bottom: 1px solid var(--rule); cursor: pointer; transition: background 150ms; }
+.trp-link-row:last-child { border-bottom: none; }
+.trp-link-row:hover { background: var(--linen); }
+.trp-link-icon { display: inline-flex; align-items: center; justify-content: center; width: 22px; height: 22px; color: var(--linen); font-family: ui-monospace, Menlo, monospace; font-size: 10px; font-weight: 700; flex-shrink: 0; border-radius: 3px; }
+.trp-link-label { flex: 1; font-weight: 500; }
+.trp-event-row { display: grid; grid-template-columns: 48px 1fr auto; gap: 12px; padding: 10px 16px; align-items: center; border-bottom: 1px solid var(--rule); }
+.trp-event-row:last-child { border-bottom: none; }
+.trp-event-date { text-align: center; padding: 5px 0; background: var(--linen); border: 1px solid var(--rule); border-radius: 4px; }
+.trp-event-day { font-size: 9px; letter-spacing: 1px; text-transform: uppercase; color: var(--ink-soft); }
+.trp-event-num { font-size: 16px; color: var(--dark); font-weight: 700; line-height: 1.1; }
+.trp-event-title { font-size: 12.5px; font-weight: 600; color: var(--dark); }
+.trp-event-time { font-size: 10.5px; color: var(--ink-soft); font-family: ui-monospace, Menlo, monospace; margin-top: 2px; }
+.trp-tag { font-size: 9px; letter-spacing: 1.5px; text-transform: uppercase; font-weight: 700; padding: 3px 8px; color: #fff; border-radius: 2px; }
+
+/* Footer */
+.trp-footer { margin-top: 36px; padding-top: 18px; border-top: 1px solid var(--rule); display: flex; justify-content: space-between; font-size: 10px; letter-spacing: 1.5px; text-transform: uppercase; color: var(--ink-soft); }
+
+/* Sitemap */
+.trp-sitemap-folder { margin-bottom: 2px; }
+.trp-sitemap-btn { display: flex; align-items: center; gap: 10px; width: 100%; padding: 12px 14px; background: var(--paper); border: 1px solid var(--rule); border-bottom: none; cursor: pointer; font-family: inherit; font-size: 14px; font-weight: 700; color: var(--dark); text-align: left; }
+.trp-sitemap-arrow { display: inline-block; width: 0; height: 0; border-left: 5px solid transparent; border-right: 5px solid transparent; border-top: 6px solid var(--dark); transition: transform 150ms; }
+.trp-sitemap-arrow.collapsed { transform: rotate(-90deg); }
+.trp-sitemap-child { display: flex; align-items: center; gap: 10px; padding: 10px 14px 10px 48px; background: var(--paper); border: 1px solid var(--rule); border-top: none; font-size: 13px; font-weight: 500; color: var(--dark); cursor: pointer; transition: background 150ms; }
+.trp-sitemap-child:hover { background: var(--linen); }
+
+/* Calendar filter/tabs */
+.trp-cal-filters { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 20px; padding: 14px; background: var(--linen); border-radius: 4px; align-items: center; }
+.trp-cal-filter-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: var(--ink-soft); margin-right: 4px; }
+.trp-chip { display: inline-flex; align-items: center; gap: 6px; padding: 5px 11px; background: #fff; border: 1px solid rgba(0,55,73,0.25); border-radius: 999px; font-size: 11px; font-weight: 500; color: var(--dark); cursor: pointer; font-family: inherit; }
+.trp-chip:hover { border-color: var(--dark); }
+.trp-chip.active { background: var(--dark); color: #fff; border-color: var(--dark); }
+.trp-chip .dot { width: 8px; height: 8px; border-radius: 50%; }
+.trp-cal-tabs { display: flex; border-bottom: 1px solid var(--rule); margin-bottom: 20px; gap: 4px; }
+.trp-cal-tab { padding: 10px 18px; background: transparent; border: none; border-bottom: 2px solid transparent; font-size: 12px; font-weight: 500; color: var(--ink-soft); cursor: pointer; font-family: inherit; letter-spacing: 0.3px; }
+.trp-cal-tab.active { color: var(--dark); font-weight: 700; border-bottom-color: var(--dark); }
+
+/* Calendar month grid */
+.trp-month-nav { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; }
+.trp-month-title { font-size: 20px; font-weight: 700; color: var(--dark); }
+.trp-month-btns { display: flex; gap: 4px; }
+.trp-month-btn { padding: 5px 12px; background: var(--paper); border: 1px solid rgba(0,55,73,0.2); border-radius: 4px; font-size: 11px; font-weight: 500; color: var(--dark); cursor: pointer; font-family: inherit; }
+.trp-month-btn:hover { background: var(--dark); color: #fff; border-color: var(--dark); }
+.trp-grid { display: grid; grid-template-columns: repeat(7, 1fr); border-left: 1px solid var(--rule); border-top: 1px solid var(--rule); }
+.trp-grid-head { padding: 8px 6px; background: var(--linen); border-right: 1px solid var(--rule); border-bottom: 1px solid var(--rule); font-size: 10px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: var(--ink-soft); }
+.trp-grid-cell { min-height: 88px; padding: 6px; border-right: 1px solid var(--rule); border-bottom: 1px solid var(--rule); background: var(--paper); }
+.trp-grid-cell.other { background: #f8f0ea; }
+.trp-grid-cell.today { background: #e0f4f7; }
+.trp-grid-daynum { font-size: 12px; font-weight: 500; color: var(--dark); margin-bottom: 3px; }
+.trp-grid-cell.other .trp-grid-daynum { color: #bbb; }
+.trp-grid-cell.today .trp-grid-daynum { color: var(--pacific); font-weight: 800; }
+.trp-pill { display: block; font-size: 9.5px; font-weight: 500; padding: 2px 5px; border-radius: 2px; margin-bottom: 2px; cursor: pointer; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; border-left: 3px solid; background: var(--linen); color: var(--ink); transition: all 150ms; }
+.trp-pill:hover { background: var(--dark); color: #fff; }
+
+/* List view */
+.trp-list-head { display: grid; grid-template-columns: 85px 1.4fr 2.5fr 140px; padding: 9px 12px; background: var(--linen); font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: var(--ink-soft); border-bottom: 2px solid rgba(0,55,73,0.2); }
+.trp-list-row { display: grid; grid-template-columns: 85px 1.4fr 2.5fr 140px; padding: 12px; border-bottom: 1px solid var(--rule); font-size: 12.5px; cursor: pointer; align-items: start; transition: background 150ms; }
+.trp-list-row:hover { background: var(--linen); }
+.trp-list-date { font-weight: 700; color: var(--dark); font-size: 13px; }
+.trp-list-title { font-weight: 500; color: var(--dark); padding-right: 10px; }
+.trp-list-detail { color: var(--ink-soft); font-size: 11.5px; padding-right: 10px; }
+.trp-list-badge { display: inline-block; font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; padding: 3px 7px; background: var(--linen); border-left: 3px solid; }
+
+/* Timeline */
+.trp-timeline { overflow-x: auto; }
+.trp-timeline-inner { min-width: 900px; }
+.trp-timeline-axis { display: grid; grid-template-columns: 150px repeat(12, 1fr); border-bottom: 2px solid var(--dark); padding-bottom: 6px; margin-bottom: 6px; }
+.trp-timeline-axis div { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: var(--ink-soft); text-align: center; }
+.trp-timeline-axis div:first-child { text-align: left; }
+.trp-timeline-row { display: grid; grid-template-columns: 150px repeat(12, 1fr); min-height: 50px; border-bottom: 1px solid var(--rule); align-items: start; }
+.trp-timeline-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; padding: 6px 10px 6px 0; }
+.trp-timeline-month { border-right: 1px solid rgba(0,55,73,0.06); padding: 4px 3px; }
+.trp-timeline-month:last-child { border-right: none; }
+.trp-timeline-ev { font-size: 9px; font-weight: 500; padding: 2px 5px; border-radius: 2px; background: var(--linen); border-left: 3px solid; color: var(--ink); margin-bottom: 2px; cursor: pointer; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.trp-timeline-ev:hover { background: var(--dark); color: #fff; }
+
+/* Modal */
+.trp-modal-bg { display: none; position: fixed; inset: 0; background: rgba(0,55,73,0.3); z-index: 200; align-items: center; justify-content: center; padding: 20px; }
+.trp-modal-bg.open { display: flex; }
+.trp-modal { background: #fff; max-width: 500px; width: 100%; padding: 26px; box-shadow: 0 20px 60px rgba(0,0,0,0.18); position: relative; }
+.trp-modal-close { position: absolute; top: 12px; right: 14px; background: none; border: none; font-size: 22px; cursor: pointer; color: #999; }
+.trp-modal-cat { display: inline-block; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; padding: 3px 8px; background: var(--linen); border-left: 3px solid; margin-bottom: 10px; }
+.trp-modal-title { font-size: 20px; font-weight: 700; margin-bottom: 10px; line-height: 1.2; color: var(--dark); }
+.trp-modal-date { font-size: 13px; color: var(--dark); font-weight: 600; margin-bottom: 14px; }
+.trp-modal-detail { font-size: 12.5px; color: var(--ink-soft); line-height: 1.6; }
+
+/* Responsive */
+@media (max-width: 900px) {
+  .trp-tiles { grid-template-columns: repeat(2, 1fr); }
+  .trp-cols { grid-template-columns: 1fr; }
+  .trp-list-head, .trp-list-row { grid-template-columns: 80px 1fr; }
+}
+@media (max-width: 600px) {
+  .trp-tiles { grid-template-columns: 1fr; }
+  .trp-header { padding: 0 16px; }
+  .trp-page { padding: 20px 16px 40px; }
+  .trp-h1 { font-size: 28px; }
+  .trp-nav { display: none; }
+}
+</style>
 </head>
 <body>
-  <iframe
-    src="https://script.google.com/macros/s/AKfycbyn_3xYc1-fvit4aW45KAh9JHx5sm9i_lvYSygvD5uP70vUy4jSzBz2JkHCEBt_qVyU/exec"
-    title="TRP Internal SharePoint"
-    allow="clipboard-write; fullscreen"
-    referrerpolicy="no-referrer-when-downgrade">
-  </iframe>
+
+<!-- ================================================================
+     HEADER
+     ================================================================ -->
+<header class="trp-header">
+  <div class="trp-header-left">
+    <svg class="trp-logo" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="16" cy="16" r="14" fill="none" stroke="#1FBDD6" stroke-width="2"/>
+      <circle cx="16" cy="16" r="10" fill="none" stroke="#1FBDD6" stroke-width="2"/>
+      <ellipse cx="16" cy="16" rx="10" ry="6" fill="none" stroke="#1FBDD6" stroke-width="2.2" transform="rotate(-25 16 16)"/>
+      <ellipse cx="16" cy="16" rx="10" ry="6" fill="none" stroke="#1FBDD6" stroke-width="2.2" transform="rotate(25 16 16)"/>
+    </svg>
+    <span class="trp-mark">TRP SharePoint</span>
+    <nav class="trp-nav" id="mainNav"></nav>
+  </div>
+  <div class="trp-header-right">
+    <span class="trp-greeting">Welcome back, <strong>Erika</strong></span>
+    <div class="trp-avatar">E</div>
+  </div>
+</header>
+
+<!-- ================================================================
+     PAGES (rendered by JS below)
+     ================================================================ -->
+<div id="page-home" class="trp-page active"></div>
+<div id="page-sitemap" class="trp-page"></div>
+<div id="page-calendar" class="trp-page"></div>
+
+<!-- Modal -->
+<div class="trp-modal-bg" id="modalBg">
+  <div class="trp-modal">
+    <button class="trp-modal-close" id="modalClose">&times;</button>
+    <div class="trp-modal-cat" id="modalCat"></div>
+    <div class="trp-modal-title" id="modalTitle"></div>
+    <div class="trp-modal-date" id="modalDate"></div>
+    <div class="trp-modal-detail" id="modalDetail"></div>
+  </div>
+</div>
+
+<script>
+// ================================================================
+// EDITABLE DATA - CHANGE THESE TO UPDATE YOUR SHAREPOINT
+// ================================================================
+
+const USER_NAME = "Erika";
+
+const SECTIONS = [
+  {
+    title: "Governance and Compliance",
+    blurb: "Bylaws, board records, policies, and compliance filings.",
+    url: "https://drive.google.com/drive/folders/YOUR_FOLDER_ID_HERE",
+    color: "#003749",
+    count: 48,
+    children: []
+  },
+  {
+    title: "Operations",
+    blurb: "Contracts, insurance, licenses, signature authority.",
+    url: "https://drive.google.com/drive/folders/YOUR_FOLDER_ID_HERE",
+    color: "#E85E60",
+    count: 86,
+    children: ["Legal and Compliance", "HR and People Ops"]
+  },
+  {
+    title: "Finance",
+    blurb: "Budgets, financial reports, QuickBooks, and audit files.",
+    url: "https://drive.google.com/drive/folders/YOUR_FOLDER_ID_HERE",
+    color: "#FFA764",
+    count: 34,
+    children: []
+  },
+  {
+    title: "Fundraising, Grants, and Donations",
+    blurb: "Grant applications, donor records, and fundraising plans.",
+    url: "https://drive.google.com/drive/folders/YOUR_FOLDER_ID_HERE",
+    color: "#1FBDD6",
+    count: 22,
+    children: []
+  }
+];
+
+const QUICK_LINKS = [
+  { label: "Board Meeting Minutes",  url: "https://drive.google.com/drive/folders/YOUR_FOLDER_ID", kind: "folder" },
+  { label: "2026 Operating Budget",  url: "https://docs.google.com/spreadsheets/d/YOUR_SHEET_ID",  kind: "sheet" },
+  { label: "All-Staff Handbook",     url: "https://docs.google.com/document/d/YOUR_DOC_ID",        kind: "doc" },
+  { label: "Brand Assets",           url: "https://drive.google.com/drive/folders/YOUR_FOLDER_ID", kind: "folder" },
+  { label: "Campaign Calendar 2026", url: "https://docs.google.com/spreadsheets/d/YOUR_SHEET_ID",  kind: "sheet" },
+  { label: "IT & Access Requests",   url: "https://docs.google.com/forms/d/YOUR_FORM_ID",          kind: "form" }
+];
+
+const HOME_EVENTS = [
+  { date: "Apr 27", day: "Mon", title: "All-staff stand-up",       time: "9:00 AM",  tag: "Staff",  tagColor: "#1FBDD6" },
+  { date: "Apr 29", day: "Wed", title: "Board Finance Committee",  time: "1:00 PM",  tag: "Board",  tagColor: "#003749" },
+  { date: "May 4",  day: "Mon", title: "Q2 Campaign review",       time: "10:30 AM", tag: "Staff",  tagColor: "#1FBDD6" },
+  { date: "May 7",  day: "Thu", title: "Annual report draft due",  time: "EOD",       tag: "Due",    tagColor: "#E85E60" },
+  { date: "May 12", day: "Tue", title: "Quarterly board meeting",  time: "9:00 AM",  tag: "Board",  tagColor: "#003749" }
+];
+
+const SITEMAP = [
+  { title: "Governance and Compliance", items: [], url: "#" },
+  { title: "Operations", items: ["Legal and Compliance", "HR and People Ops"], url: "#" },
+  { title: "Finance", items: [], url: "#" },
+  { title: "Fundraising, Grants, and Donations", items: [], url: "#" },
+  { title: "Programs Main", items: ["Youth Programs", "Impact Campaign", "Impact Measurement"], url: "#" },
+  { title: "Film and Distribution", items: [], url: "#" },
+  { title: "Communications", items: ["IT and Governance"], url: "#" }
+];
+
+const CAL_EVENTS = [
+  // ORGANIZATIONAL MILESTONES
+  { date:"2026-04-01", title:"Fiscal Year 2026-2027 Begins", detail:"New fiscal year start.", cat:"org" },
+  { date:"2026-04-15", title:"All-Staff Quarterly Meeting", detail:"Q1 kickoff.", cat:"org" },
+  { date:"2026-06-01", title:"Harassment Prevention Training Window Opens", detail:"All staff complete SB 1343 within 30 days.", cat:"org" },
+  { date:"2026-07-15", title:"All-Staff Quarterly Meeting", detail:"Mid-year.", cat:"org" },
+  { date:"2026-10-15", title:"All-Staff Quarterly Meeting", detail:"Q3.", cat:"org" },
+  { date:"2027-01-15", title:"All-Staff Quarterly Meeting + New Year Planning", detail:"Calendar year kick-off.", cat:"org" },
+  { date:"2027-03-15", title:"End of Fiscal Year Prep", detail:"Wrap-up.", cat:"org" },
+  { date:"2027-03-31", title:"Fiscal Year 2026-2027 Ends", detail:"Final day.", cat:"org" },
+
+  // HOLIDAYS & CLOSURES
+  { date:"2026-04-01", title:"Cesar Chavez Day (CA)", detail:"Office closed.", cat:"holiday" },
+  { date:"2026-05-25", title:"Memorial Day", detail:"Office closed.", cat:"holiday" },
+  { date:"2026-06-19", title:"Juneteenth", detail:"Office closed.", cat:"holiday" },
+  { date:"2026-07-03", title:"Independence Day (observed)", detail:"Office closed.", cat:"holiday" },
+  { date:"2026-09-07", title:"Labor Day", detail:"Office closed.", cat:"holiday" },
+  { date:"2026-11-26", title:"Thanksgiving", detail:"Office closed.", cat:"holiday" },
+  { date:"2026-11-27", title:"Day after Thanksgiving", detail:"Office closed.", cat:"holiday" },
+  { date:"2026-12-24", title:"Winter Closure Begins", detail:"Closed through Jan 1.", cat:"holiday" },
+  { date:"2026-12-25", title:"Christmas Day", detail:"Office closed.", cat:"holiday" },
+  { date:"2027-01-01", title:"New Year's Day", detail:"Office closed.", cat:"holiday" },
+  { date:"2027-01-19", title:"MLK Jr. Day", detail:"Office closed.", cat:"holiday" },
+  { date:"2027-02-16", title:"Presidents' Day", detail:"Office closed.", cat:"holiday" },
+
+  // BIRTHDAYS & ANNIVERSARIES
+  { date:"2026-04-12", title:"[Staff Name] Birthday", detail:"Update with real name.", cat:"birthday" },
+  { date:"2026-05-08", title:"[Staff Name] Birthday", detail:"Update with real name.", cat:"birthday" },
+  { date:"2026-05-15", title:"[Staff Name] Work Anniversary", detail:"Update.", cat:"birthday" },
+  { date:"2026-06-20", title:"[Staff Name] Birthday", detail:"Update.", cat:"birthday" },
+  { date:"2026-08-14", title:"[Staff Name] Birthday", detail:"Update.", cat:"birthday" },
+  { date:"2026-09-03", title:"[Staff Name] Birthday", detail:"Update.", cat:"birthday" },
+  { date:"2026-09-10", title:"[Staff Name] Work Anniversary", detail:"Update.", cat:"birthday" },
+  { date:"2026-10-22", title:"[Staff Name] Birthday", detail:"Update.", cat:"birthday" },
+  { date:"2026-12-11", title:"[Staff Name] Birthday", detail:"Update.", cat:"birthday" },
+  { date:"2027-01-05", title:"[Staff Name] Work Anniversary", detail:"Update.", cat:"birthday" },
+  { date:"2027-02-07", title:"[Staff Name] Birthday", detail:"Update.", cat:"birthday" },
+
+  // DEI & AWARENESS DATES
+  { date:"2026-05-01", title:"AAPI Heritage Month Begins", detail:"May.", cat:"dei" },
+  { date:"2026-05-01", title:"Mental Health Awareness Month", detail:"May.", cat:"dei" },
+  { date:"2026-05-17", title:"IDAHOBIT", detail:"Int'l Day Against Homophobia, Biphobia, Transphobia.", cat:"dei" },
+  { date:"2026-06-01", title:"Pride Month Begins", detail:"June.", cat:"dei" },
+  { date:"2026-06-12", title:"Loving Day", detail:"Loving v. Virginia (1967).", cat:"dei" },
+  { date:"2026-06-19", title:"Juneteenth (DEI)", detail:"Emancipation.", cat:"dei" },
+  { date:"2026-07-01", title:"Disability Pride Month", detail:"July.", cat:"dei" },
+  { date:"2026-07-26", title:"ADA Anniversary", detail:"Signed 1990.", cat:"dei" },
+  { date:"2026-08-26", title:"Women's Equality Day", detail:"19th Amendment (1920).", cat:"dei" },
+  { date:"2026-09-15", title:"Hispanic / Latine Heritage Month", detail:"Sept 15 - Oct 15.", cat:"dei" },
+  { date:"2026-10-01", title:"Domestic Violence Awareness Month", detail:"October.", cat:"dei" },
+  { date:"2026-10-11", title:"National Coming Out Day", detail:"LGBTQ+ awareness.", cat:"dei" },
+  { date:"2026-10-12", title:"Indigenous Peoples Day", detail:"Honors Indigenous peoples.", cat:"dei" },
+  { date:"2026-11-01", title:"Native American Heritage Month", detail:"November.", cat:"dei" },
+  { date:"2026-11-13", title:"Transgender Awareness Week", detail:"Nov 13-19.", cat:"dei" },
+  { date:"2026-11-20", title:"Transgender Day of Remembrance", detail:"Honors lives lost.", cat:"dei" },
+  { date:"2026-11-25", title:"Int'l Day: Elimination of Violence Against Women", detail:"UN day.", cat:"dei" },
+  { date:"2026-12-01", title:"World AIDS Day", detail:"Global awareness.", cat:"dei" },
+  { date:"2026-12-03", title:"Int'l Day of Persons with Disabilities", detail:"UN.", cat:"dei" },
+  { date:"2026-12-10", title:"International Human Rights Day", detail:"UDHR (1948).", cat:"dei" },
+  { date:"2027-01-19", title:"MLK Jr. Day (DEI)", detail:"Civil rights.", cat:"dei" },
+  { date:"2027-02-01", title:"Black History Month", detail:"February.", cat:"dei" },
+  { date:"2027-03-01", title:"Women's History Month", detail:"March.", cat:"dei" },
+  { date:"2027-03-08", title:"International Women's Day", detail:"Gender equity.", cat:"dei" },
+  { date:"2027-03-16", title:"Equal Pay Day", detail:"Shifts annually - verify date.", cat:"dei" },
+  { date:"2027-03-31", title:"Transgender Day of Visibility", detail:"Trans communities.", cat:"dei" },
+
+  // PARTNER & FUNDER EVENTS
+  { date:"2026-05-01", title:"[Partner Event Placeholder]", detail:"Edit to add details.", cat:"partner" },
+  { date:"2026-10-01", title:"Year-End Giving Season Kickoff", detail:"Campaign launch.", cat:"partner" },
+  { date:"2026-11-03", title:"Giving Tuesday Planning", detail:"Planning begins.", cat:"partner" },
+  { date:"2026-12-01", title:"Giving Tuesday", detail:"Annual global giving day.", cat:"partner" },
+
+  // MISSION MOMENTS
+  { date:"2026-04-08", title:"TRP Founding Anniversary", detail:"Placeholder - update to actual date.", cat:"mission" },
+  { date:"2026-06-15", title:"The Mask You Live In Anniversary", detail:"Released 2015.", cat:"mission" },
+  { date:"2026-09-01", title:"Miss Representation: Rise Up Release", detail:"Update when confirmed.", cat:"mission" },
+  { date:"2026-10-20", title:"Miss Representation Release Anniversary", detail:"Sundance 2011.", cat:"mission" },
+  { date:"2027-01-22", title:"Miss Rep Sundance Premiere Anniversary", detail:"Jan 22, 2011.", cat:"mission" }
+];
+
+const CAT_META = {
+  org:      { label: "Organizational",            color: "#2D6A4F" },
+  holiday:  { label: "Holidays & Closures",       color: "#a85c3a" },
+  birthday: { label: "Birthdays & Anniversaries", color: "#c97560" },
+  dei:      { label: "DEI & Awareness",           color: "#5c3d7a" },
+  partner:  { label: "Partner & Funder",          color: "#3a5a7a" },
+  mission:  { label: "Mission Moments",           color: "#a8832b" }
+};
+
+// ================================================================
+// END OF EDITABLE DATA
+// ================================================================
+
+// State
+let currentPage = "home";
+let calFilter = "all";
+let calView = "month";
+let calDate = new Date(2026, 3, 1);
+const expanded = {};
+
+// Navigation
+const pages = ["Home", "Sitemap", "Calendar"];
+const nav = document.getElementById("mainNav");
+pages.forEach(p => {
+  const btn = document.createElement("button");
+  btn.className = "trp-nav-btn" + (p.toLowerCase() === currentPage ? " active" : "");
+  btn.textContent = p;
+  btn.onclick = () => switchPage(p.toLowerCase());
+  nav.appendChild(btn);
+});
+
+function switchPage(p) {
+  currentPage = p;
+  document.querySelectorAll(".trp-nav-btn").forEach((b, i) => b.classList.toggle("active", pages[i].toLowerCase() === p));
+  document.querySelectorAll(".trp-page").forEach(el => el.classList.remove("active"));
+  document.getElementById("page-" + p).classList.add("active");
+  render();
+}
+
+// Helpers
+function el(tag, cls, html) { const e = document.createElement(tag); if (cls) e.className = cls; if (html) e.innerHTML = html; return e; }
+function fmtShort(ds) { const d = new Date(ds+"T00:00:00"); return d.toLocaleDateString("en-US",{month:"short",day:"numeric",year:"2-digit"}); }
+function fmtLong(ds) { const d = new Date(ds+"T00:00:00"); return d.toLocaleDateString("en-US",{weekday:"long",month:"long",day:"numeric",year:"numeric"}); }
+const kindColors = { folder:"#003749", sheet:"#0F9D58", doc:"#4285F4", form:"#7627BB" };
+const kindLetters = { folder:"F", sheet:"S", doc:"D", form:"?" };
+
+// Modal
+const modalBg = document.getElementById("modalBg");
+document.getElementById("modalClose").onclick = () => modalBg.classList.remove("open");
+modalBg.onclick = e => { if (e.target === modalBg) modalBg.classList.remove("open"); };
+document.addEventListener("keydown", e => { if (e.key === "Escape") modalBg.classList.remove("open"); });
+
+function openModal(ev) {
+  const m = CAT_META[ev.cat];
+  document.getElementById("modalCat").textContent = m.label;
+  document.getElementById("modalCat").style.borderLeftColor = m.color;
+  document.getElementById("modalCat").style.color = m.color;
+  document.getElementById("modalTitle").textContent = ev.title;
+  document.getElementById("modalDate").textContent = fmtLong(ev.date);
+  document.getElementById("modalDetail").textContent = ev.detail;
+  modalBg.classList.add("open");
+}
+
+// Render Home
+function renderHome() {
+  const c = document.getElementById("page-home");
+  c.innerHTML = "";
+
+  c.innerHTML += `
+    <div class="trp-kicker">Internal Workspace</div>
+    <h1 class="trp-h1">Good morning, ${USER_NAME}.</h1>
+    <p class="trp-sub">Thursday, April 23, 2026 . ${SECTIONS.length} sections available</p>
+  `;
+
+  const tiles = el("div", "trp-tiles");
+  SECTIONS.forEach(s => {
+    const t = el("a", "trp-tile");
+    t.href = s.url;
+    t.target = "_blank";
+    let childTags = "";
+    if (s.children && s.children.length) {
+      childTags = '<div class="trp-tile-tags">' + s.children.map(c => `<span class="trp-tile-tag">${c}</span>`).join("") + '</div>';
+    }
+    t.innerHTML = `
+      <div>
+        <div class="trp-tile-bar" style="background:${s.color}"></div>
+        <h3>${s.title}</h3>
+        <p>${s.blurb}</p>
+        ${childTags}
+      </div>
+      <div class="trp-tile-foot"><span>${s.count} items</span><span>Open folder &rarr;</span></div>
+    `;
+    tiles.appendChild(t);
+  });
+  c.appendChild(tiles);
+
+  const cols = el("div", "trp-cols");
+
+  const qlPanel = el("div", "trp-panel");
+  qlPanel.innerHTML = `<div class="trp-panel-head"><span class="trp-panel-title">Quick Links</span><span class="trp-panel-meta">&#8599; Google Drive</span></div>`;
+  QUICK_LINKS.forEach(l => {
+    const row = el("a", "trp-link-row");
+    row.href = l.url;
+    row.target = "_blank";
+    row.innerHTML = `
+      <span class="trp-link-icon" style="background:${kindColors[l.kind]||"#003749"}">${kindLetters[l.kind]||"F"}</span>
+      <span class="trp-link-label">${l.label}</span>
+      <span style="color:#5a4a42">&rarr;</span>
+    `;
+    qlPanel.appendChild(row);
+  });
+  cols.appendChild(qlPanel);
+
+  const evPanel = el("div", "trp-panel");
+  evPanel.innerHTML = `<div class="trp-panel-head"><span class="trp-panel-title">Upcoming</span><span class="trp-panel-meta">Next 3 weeks</span></div>`;
+  HOME_EVENTS.forEach(e => {
+    const row = el("div", "trp-event-row");
+    row.innerHTML = `
+      <div class="trp-event-date"><div class="trp-event-day">${e.day}</div><div class="trp-event-num">${e.date.split(" ")[1]}</div></div>
+      <div><div class="trp-event-title">${e.title}</div><div class="trp-event-time">${e.time}</div></div>
+      <span class="trp-tag" style="background:${e.tagColor}">${e.tag}</span>
+    `;
+    evPanel.appendChild(row);
+  });
+  cols.appendChild(evPanel);
+  c.appendChild(cols);
+
+  c.innerHTML += `<div class="trp-footer"><span>sharepoint.therepproject.org</span><span>The Representation Project . Internal Use Only</span></div>`;
+}
+
+// Render Sitemap
+function renderSitemap() {
+  const c = document.getElementById("page-sitemap");
+  c.innerHTML = `
+    <h1 class="trp-h1" style="font-size:32px;margin-bottom:6px">Sitemap</h1>
+    <p class="trp-sub">All folders link to Google Drive. Click to expand subfolders.</p>
+  `;
+  const wrap = el("div");
+  SITEMAP.forEach(f => {
+    const hasKids = f.items && f.items.length > 0;
+    const div = el("div", "trp-sitemap-folder");
+
+    const btn = el("button", "trp-sitemap-btn");
+    const arrowCls = expanded[f.title] ? "" : " collapsed";
+    btn.innerHTML = (hasKids ? `<span class="trp-sitemap-arrow${arrowCls}"></span>` : '<span style="width:10px"></span>') +
+      `<span class="trp-link-icon" style="background:#003749">F</span> ${f.title}`;
+    btn.onclick = () => { if (hasKids) { expanded[f.title] = !expanded[f.title]; renderSitemap(); } };
+    div.appendChild(btn);
+
+    if (hasKids && expanded[f.title]) {
+      f.items.forEach(sub => {
+        const child = el("a", "trp-sitemap-child");
+        child.href = "#";
+        child.innerHTML = `<span class="trp-link-icon" style="background:#1FBDD6">F</span> ${sub}`;
+        div.appendChild(child);
+      });
+    }
+    wrap.appendChild(div);
+  });
+  wrap.appendChild(el("div", "", "")).style.borderBottom = "1px solid rgba(0,55,73,0.12)";
+  c.appendChild(wrap);
+}
+
+// Render Calendar
+function renderCalendar() {
+  const c = document.getElementById("page-calendar");
+  c.innerHTML = "";
+
+  c.innerHTML += `
+    <div style="font-size:10px;letter-spacing:2px;text-transform:uppercase;color:#5a4a42;margin-bottom:6px">The Representation Project . Fiscal Year 2026-2027</div>
+    <h1 class="trp-h1" style="font-size:32px;margin-bottom:6px">Main Calendar</h1>
+    <p class="trp-sub" style="max-width:720px;line-height:1.6">The organizational heartbeat. Milestones, closures, birthdays, DEI dates, partner events, and mission moments. Department deadlines live on their own calendars.</p>
+  `;
+
+  const filters = el("div", "trp-cal-filters");
+  filters.innerHTML = '<span class="trp-cal-filter-label">Filter:</span>';
+  const allChip = el("button", "trp-chip" + (calFilter==="all"?" active":""));
+  allChip.textContent = "All";
+  allChip.onclick = () => { calFilter="all"; renderCalendar(); };
+  filters.appendChild(allChip);
+  Object.entries(CAT_META).forEach(([k,m]) => {
+    const chip = el("button", "trp-chip" + (calFilter===k?" active":""));
+    chip.innerHTML = `<span class="dot" style="background:${calFilter===k?"#fff":m.color}"></span>${m.label}`;
+    chip.onclick = () => { calFilter=k; renderCalendar(); };
+    filters.appendChild(chip);
+  });
+  c.appendChild(filters);
+
+  const tabs = el("div", "trp-cal-tabs");
+  [["month","Month"],["list","List"],["timeline","Year Timeline"]].forEach(([k,label]) => {
+    const tab = el("button", "trp-cal-tab" + (calView===k?" active":""));
+    tab.textContent = label;
+    tab.onclick = () => { calView=k; renderCalendar(); };
+    tabs.appendChild(tab);
+  });
+  c.appendChild(tabs);
+
+  const filtered = calFilter==="all" ? CAL_EVENTS : CAL_EVENTS.filter(e=>e.cat===calFilter);
+
+  if (calView === "month") renderMonthView(c, filtered);
+  else if (calView === "list") renderListView(c, filtered);
+  else renderTimelineView(c, filtered);
+}
+
+function renderMonthView(c, events) {
+  const monthNames = ["January","February","March","April","May","June","July","August","September","October","November","December"];
+  const y = calDate.getFullYear(), m = calDate.getMonth();
+
+  const nav = el("div","trp-month-nav");
+  nav.innerHTML = `<div class="trp-month-title">${monthNames[m]} ${y}</div>`;
+  const btns = el("div","trp-month-btns");
+  const prev = el("button","trp-month-btn","&larr; Prev"); prev.onclick=()=>{calDate=new Date(y,m-1,1);renderCalendar();};
+  const reset = el("button","trp-month-btn","Reset"); reset.onclick=()=>{calDate=new Date(2026,3,1);renderCalendar();};
+  const next = el("button","trp-month-btn","Next &rarr;"); next.onclick=()=>{calDate=new Date(y,m+1,1);renderCalendar();};
+  btns.append(prev,reset,next);
+  nav.appendChild(btns);
+  c.appendChild(nav);
+
+  const grid = el("div","trp-grid");
+  ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"].forEach(d => grid.appendChild(el("div","trp-grid-head",d)));
+
+  const firstDay = new Date(y,m,1).getDay();
+  const total = new Date(y,m+1,0).getDate();
+  const prevLast = new Date(y,m,0).getDate();
+  const todayStr = new Date().toISOString().split("T")[0];
+
+  for (let i=firstDay-1;i>=0;i--) { const cell=el("div","trp-grid-cell other"); cell.innerHTML=`<div class="trp-grid-daynum">${prevLast-i}</div>`; grid.appendChild(cell); }
+
+  for (let d=1;d<=total;d++) {
+    const ds = `${y}-${String(m+1).padStart(2,"0")}-${String(d).padStart(2,"0")}`;
+    const isToday = ds===todayStr;
+    const cell = el("div","trp-grid-cell"+(isToday?" today":""));
+    cell.innerHTML = `<div class="trp-grid-daynum">${d}</div>`;
+    const dayEvs = events.filter(e=>e.date===ds);
+    dayEvs.slice(0,3).forEach(ev => {
+      const pill = el("div","trp-pill");
+      pill.textContent = ev.title;
+      pill.style.borderLeftColor = CAT_META[ev.cat].color;
+      pill.onclick = (e) => { e.stopPropagation(); openModal(ev); };
+      cell.appendChild(pill);
+    });
+    if (dayEvs.length>3) {
+      const more = el("div","trp-pill");
+      more.style.background="#003749"; more.style.color="#fff"; more.style.borderLeftColor="#003749";
+      more.textContent = `+ ${dayEvs.length-3} more`;
+      cell.appendChild(more);
+    }
+    grid.appendChild(cell);
+  }
+
+  const trailing = (7-((firstDay+total)%7))%7;
+  for (let i=1;i<=trailing;i++) { const cell=el("div","trp-grid-cell other"); cell.innerHTML=`<div class="trp-grid-daynum">${i}</div>`; grid.appendChild(cell); }
+  c.appendChild(grid);
+}
+
+function renderListView(c, events) {
+  const wrap = el("div");
+  wrap.innerHTML = `<div class="trp-list-head"><div>Date</div><div>Event</div><div>Detail</div><div>Category</div></div>`;
+  const sorted = [...events].sort((a,b)=>a.date.localeCompare(b.date));
+  if (!sorted.length) { wrap.innerHTML += '<div style="padding:40px;text-align:center;color:#999;font-size:13px">No events match.</div>'; c.appendChild(wrap); return; }
+  sorted.forEach(ev => {
+    const row = el("div","trp-list-row");
+    const m = CAT_META[ev.cat];
+    row.innerHTML = `
+      <div class="trp-list-date">${fmtShort(ev.date)}</div>
+      <div class="trp-list-title">${ev.title}</div>
+      <div class="trp-list-detail">${ev.detail}</div>
+      <div><span class="trp-list-badge" style="border-left-color:${m.color};color:${m.color}">${m.label}</span></div>
+    `;
+    row.onclick = () => openModal(ev);
+    wrap.appendChild(row);
+  });
+  c.appendChild(wrap);
+}
+
+function renderTimelineView(c, events) {
+  const fiscalLabels = ["Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec","Jan","Feb","Mar"];
+  const fiscalIdx = [3,4,5,6,7,8,9,10,11,0,1,2];
+  const cats = [...new Set(events.map(e=>e.cat))];
+
+  const outer = el("div","trp-timeline");
+  const inner = el("div","trp-timeline-inner");
+
+  const axis = el("div","trp-timeline-axis");
+  axis.innerHTML = '<div>Category</div>' + fiscalLabels.map(m=>`<div>${m}</div>`).join("");
+  inner.appendChild(axis);
+
+  if (!cats.length) { inner.innerHTML += '<div style="padding:40px;text-align:center;color:#999;font-size:13px">No events match.</div>'; outer.appendChild(inner); c.appendChild(outer); return; }
+
+  cats.forEach(cat => {
+    const m = CAT_META[cat];
+    const row = el("div","trp-timeline-row");
+    row.innerHTML = `<div class="trp-timeline-label" style="color:${m.color}">${m.label}</div>`;
+    fiscalIdx.forEach(mi => {
+      const mc = el("div","trp-timeline-month");
+      const mEvs = events.filter(e => { const d=new Date(e.date+"T00:00:00"); return e.cat===cat && d.getMonth()===mi; });
+      mEvs.forEach(ev => {
+        const bar = el("div","trp-timeline-ev");
+        bar.style.borderLeftColor = m.color;
+        bar.textContent = ev.title;
+        bar.onclick = () => openModal(ev);
+        mc.appendChild(bar);
+      });
+      row.appendChild(mc);
+    });
+    inner.appendChild(row);
+  });
+  outer.appendChild(inner);
+  c.appendChild(outer);
+}
+
+// Master render
+function render() {
+  if (currentPage === "home") renderHome();
+  else if (currentPage === "sitemap") renderSitemap();
+  else if (currentPage === "calendar") renderCalendar();
+}
+
+render();
+</script>
 </body>
 </html>
